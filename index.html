@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusTimer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Focus<span>Timer</span></h1>
 
+      <nav>
+        <button class="nav-btn active" data-panel="timer">◷ Timer</button>
+        <button class="nav-btn" data-panel="calendar">▣ Calendar</button>
+        <button class="nav-btn" data-panel="stats">▥ Stats</button>
+        <button class="nav-btn" data-panel="settings">⚙ Settings</button>
+      </nav>
+
+      <section class="side-panel active" id="calendarPanel">
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <button id="prevMonth">‹</button>
+            <h2 id="monthLabel">May 2025</h2>
+            <button id="nextMonth">›</button>
+          </div>
+
+          <div class="weekdays">
+            <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+          </div>
+
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+
+        <section class="sessions">
+          <div class="section-title">
+            <h3>Today's Sessions</h3>
+            <button id="addSessionBtn">+ Add</button>
+          </div>
+          <div id="sessionList"></div>
+        </section>
+      </section>
+
+      <section class="side-panel" id="statsPanel">
+        <h3>Stats</h3>
+        <div class="stat-card"><span>Total Sessions</span><strong id="totalSessions">0</strong></div>
+        <div class="stat-card"><span>Total Focus Time</span><strong id="totalMinutes">0 min</strong></div>
+        <div class="stat-card"><span>Today</span><strong id="todayMinutes">0 min</strong></div>
+      </section>
+
+      <section class="side-panel" id="settingsPanel">
+        <h3>Settings</h3>
+        <label>Timer Length</label>
+        <div class="stepper small">
+          <button id="settingsMinus">−</button>
+          <input id="settingsMinutes" type="number" min="5" step="5" value="25">
+          <button id="settingsPlus">+</button>
+        </div>
+
+        <button class="full-btn" id="clearSessionsBtn">Clear Sessions</button>
+      </section>
+
+      <blockquote id="quote"></blockquote>
+    </aside>
+
+    <main class="main">
+      <section class="timer-section">
+        <div class="timer-ring">
+          <svg viewBox="0 0 260 260">
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <circle class="track" cx="130" cy="130" r="105"></circle>
+            <circle class="progress" cx="130" cy="130" r="105"></circle>
+          </svg>
+          <div id="timerText">25:00</div>
+        </div>
+
+        <div class="time-stepper">
+          <button id="decreaseTime">−5</button>
+          <span id="timeAmount">25 min</span>
+          <button id="increaseTime">+5</button>
+        </div>
+
+        <div class="controls">
+          <button id="startPauseBtn">▷</button>
+          <button id="skipBtn">▷|</button>
+          <button id="resetBtn">↻</button>
+          <button id="stopAlarmBtn">🔕</button>
+          <button id="settingsBtn">≡</button>
+        </div>
+
+        <div class="session-status">
+          <span id="modeLabel">Work Session</span>
+          <span>↻ <span id="cycleLabel">4/4</span></span>
+        </div>
+
+        <div class="focus-input">
+          <label>What are you focusing on?</label>
+          <input id="focusInput" type="text" placeholder="e.g. Study for exam, Read a book..." />
+          <button id="saveFocusBtn">Save to Calendar</button>
+        </div>
+
+        <div class="breaks">
+          <button class="break active" data-minutes="5">
+            <strong>Short Break</strong>
+            <span>5 min</span>
+          </button>
+
+          <button class="break" data-minutes="15">
+            <strong>Long Break</strong>
+            <span>15 min</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right-panel">
+      <section class="music-card">
+        <h2>Lo-fi Beats</h2>
+        <p>Spotify Playlist</p>
+
+        <iframe
+          src="https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator"
+          width="100%"
+          height="352"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </section>
+
+      <section class="pip-card">
+        <h2>Miniplayer</h2>
+        <p>Keep the timer on top while you focus on other things.</p>
+        <button id="pipBtn">Open Miniplayer ↗</button>
+      </section>
+
+      <section class="mini-preview">
+        <div class="mini-header">
+          <h3>FocusTimer</h3>
+          <span>⚙ ×</span>
+        </div>
+
+        <div class="mini-ring">
+          <span id="miniTimerText">25:00</span>
+        </div>
+
+        <div class="mini-controls">
+          <button>▷</button>
+          <button>▷|</button>
+          <button>↻</button>
+          <button>≡</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <audio id="alarmSound" loop preload="auto">
+    <source src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg" type="audio/ogg">
+  </audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
