@@ -6,10 +6,8 @@
   <title>FocusTimer</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
   <div class="app">
-    <!-- LEFT SIDEBAR -->
     <aside class="sidebar">
       <h1>Focus<span>Timer</span></h1>
 
@@ -23,7 +21,7 @@
       <section class="calendar-card">
         <div class="calendar-header">
           <button id="prevMonth">‹</button>
-          <h2 id="monthLabel">May 2025</h2>
+          <h2 id="monthLabel"></h2>
           <button id="nextMonth">›</button>
         </div>
 
@@ -36,48 +34,39 @@
 
       <section class="sessions">
         <div class="section-title">
-          <h3>Today's Sessions</h3>
+          <h3>Selected Day</h3>
           <button id="addSessionBtn">+ Add</button>
         </div>
-
         <div id="sessionList"></div>
       </section>
 
-      <blockquote id="quote">
-        “Discipline is choosing between what you want now and what you want most.” — Abraham Lincoln
-      </blockquote>
+      <blockquote id="quote"></blockquote>
     </aside>
 
-    <!-- CENTER -->
     <main class="main">
-      <!-- TIMER VIEW -->
       <section id="timerView" class="main-view active">
         <div class="timer-section">
           <div class="timer-ring">
-            <svg viewBox="0 0 260 260" aria-hidden="true">
+            <svg viewBox="0 0 260 260">
               <circle class="track" cx="130" cy="130" r="105"></circle>
               <circle class="progress" cx="130" cy="130" r="105"></circle>
             </svg>
-
             <div id="timerText">25:00</div>
           </div>
 
           <div class="time-adjust">
             <button id="minusBtn">− 5 min</button>
+            <input id="manualMinutes" type="number" min="1" placeholder="25" />
+            <button id="setManualBtn">Set</button>
             <button id="plusBtn">+ 5 min</button>
           </div>
 
           <div class="controls">
-            <button id="startPauseBtn" title="Start / Pause">▷</button>
-            <button id="skipBtn" title="Finish Session">▷|</button>
-            <button id="resetBtn" title="Reset">↻</button>
-            <button id="settingsBtn" title="Timer Settings">≡</button>
-            <button id="stopAlarmBtn" title="Stop Alarm">🔕</button>
-          </div>
-
-          <div class="session-status">
-            <span id="modeLabel">Work Session</span>
-            <span>↻ <span id="cycleLabel">4/4</span></span>
+            <button id="startPauseBtn">▷</button>
+            <button id="skipBtn">▷|</button>
+            <button id="resetBtn">↻</button>
+            <button id="settingsBtn">≡</button>
+            <button id="stopAlarmBtn">🔕</button>
           </div>
 
           <div class="focus-input">
@@ -86,12 +75,15 @@
           </div>
 
           <div class="breaks">
-            <button class="break active" data-minutes="5" data-label="Short Break">
+            <button class="break active" data-minutes="25">
+              <strong>Focus</strong>
+              <span>25 min</span>
+            </button>
+            <button class="break" data-minutes="5">
               <strong>Short Break</strong>
               <span>5 min</span>
             </button>
-
-            <button class="break" data-minutes="15" data-label="Long Break">
+            <button class="break" data-minutes="15">
               <strong>Long Break</strong>
               <span>15 min</span>
             </button>
@@ -99,70 +91,52 @@
         </div>
       </section>
 
-      <!-- CALENDAR PANEL -->
       <section id="calendarPanel" class="main-view panel-view">
         <h2>Calendar</h2>
-        <p>Select a day on the left calendar to view saved focus sessions.</p>
+        <p>Saved sessions for the selected day.</p>
         <div id="calendarSessionList" class="big-card"></div>
       </section>
 
-      <!-- STATS PANEL -->
       <section id="statsPanel" class="main-view panel-view">
         <h2>Stats</h2>
         <p>Your focus progress updates automatically.</p>
-
         <div class="stats-grid">
-          <div class="stat-card">
-            <span>Total Sessions</span>
-            <strong id="totalSessions">0</strong>
-          </div>
-
-          <div class="stat-card">
-            <span>Total Minutes</span>
-            <strong id="totalMinutes">0</strong>
-          </div>
-
-          <div class="stat-card">
-            <span>Today</span>
-            <strong id="todayMinutes">0</strong>
-          </div>
+          <div class="stat-card"><span>Total Sessions</span><strong id="totalSessions">0</strong></div>
+          <div class="stat-card"><span>Total Minutes</span><strong id="totalMinutes">0</strong></div>
+          <div class="stat-card"><span>Today</span><strong id="todayMinutes">0</strong></div>
         </div>
       </section>
 
-      <!-- SETTINGS PANEL -->
       <section id="settingsPanel" class="main-view panel-view">
         <h2>Settings</h2>
-        <p>Adjust the focus timer in 5-minute increments.</p>
-
+        <p>Change your timer length.</p>
         <div class="settings-card">
-          <label for="settingsMinutes">Timer length</label>
-
+          <label>Timer length in minutes</label>
           <div class="settings-row">
             <button id="settingsMinus">−</button>
-            <input id="settingsMinutes" type="number" min="5" step="5" value="25" />
+            <input id="settingsMinutes" type="number" min="1" value="25" />
             <button id="settingsPlus">+</button>
           </div>
-
           <button id="applySettingsBtn">Apply Timer Length</button>
           <button id="clearSessionsBtn">Clear Saved Sessions</button>
         </div>
       </section>
     </main>
 
-    <!-- RIGHT PANEL -->
     <aside class="right-panel">
       <section class="music-card">
         <h2>Lo-fi Beats</h2>
         <p>Spotify Playlist</p>
-
-        <iframe
-          src="https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator"
-          width="100%"
-          height="352"
-          frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy">
-        </iframe>
+        <div class="spotify-wrap">
+          <iframe
+            src="https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy">
+          </iframe>
+        </div>
       </section>
 
       <section class="pip-card">
@@ -177,8 +151,12 @@
           <span>⚙ ×</span>
         </div>
 
-        <div class="mini-ring">
-          <span id="miniTimerText">25:00</span>
+        <div class="mini-timer-ring">
+          <svg viewBox="0 0 260 260">
+            <circle class="mini-track" cx="130" cy="130" r="105"></circle>
+            <circle class="mini-progress" cx="130" cy="130" r="105"></circle>
+          </svg>
+          <div id="miniTimerText">25:00</div>
         </div>
 
         <div class="mini-controls">
