@@ -25,7 +25,6 @@ input {
   grid-template-columns: 360px 1fr 360px;
 }
 
-/* LEFT SIDEBAR */
 .sidebar,
 .right-panel {
   background: rgba(14, 17, 33, 0.78);
@@ -64,7 +63,6 @@ nav {
   text-align: left;
   font-size: 15px;
   cursor: pointer;
-  transition: .2s ease;
 }
 
 .nav-btn.active,
@@ -74,7 +72,6 @@ nav {
   box-shadow: inset 0 0 0 1px rgba(111,134,255,.25);
 }
 
-/* CALENDAR */
 .calendar-card {
   border-top: 1px solid rgba(255,255,255,.1);
   border-bottom: 1px solid rgba(255,255,255,.1);
@@ -150,7 +147,6 @@ nav {
   border-radius: 50%;
 }
 
-/* SESSIONS */
 .sessions {
   padding-top: 20px;
 }
@@ -169,8 +165,7 @@ nav {
 #addSessionBtn,
 #saveFocusBtn,
 #pipBtn,
-#applySettingsBtn,
-#clearSessionsBtn {
+#applySettingsBtn {
   background: rgba(111,134,255,.2);
   border: 1px solid rgba(111,134,255,.6);
   color: #aab6ff;
@@ -178,15 +173,6 @@ nav {
   padding: 10px 14px;
   cursor: pointer;
   font-weight: 700;
-  transition: .2s;
-}
-
-#addSessionBtn:hover,
-#saveFocusBtn:hover,
-#pipBtn:hover,
-#applySettingsBtn:hover,
-#clearSessionsBtn:hover {
-  background: rgba(111,134,255,.32);
 }
 
 .session-item {
@@ -233,7 +219,6 @@ blockquote {
   line-height: 1.5;
 }
 
-/* MAIN */
 .main {
   display: grid;
   place-items: center;
@@ -246,7 +231,6 @@ blockquote {
 
 .view.active {
   display: block;
-  width: 100%;
 }
 
 .timer-section {
@@ -254,29 +238,36 @@ blockquote {
   text-align: center;
 }
 
-/* TIMER RING */
 .timer-ring {
   width: 390px;
   height: 390px;
-  margin: 0 auto 22px;
+  margin: 0 auto 24px;
   position: relative;
   border-radius: 50%;
+  background: transparent;
+  overflow: visible;
 }
 
-.ring-glow {
+.timer-ring::before {
+  content: "";
   position: absolute;
-  inset: 20px;
+  inset: 24px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(111,134,255,.08), transparent 62%);
-  filter: blur(18px);
+  background: radial-gradient(circle, rgba(111,134,255,.12), transparent 62%);
+  filter: blur(22px);
+  z-index: 0;
   pointer-events: none;
 }
 
 .timer-ring svg {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
   overflow: visible;
+  display: block;
+  background: transparent;
 }
 
 .track,
@@ -290,7 +281,7 @@ blockquote {
 }
 
 .progress {
-  stroke: url(#timerGradient);
+  stroke: #6f86ff;
   stroke-linecap: round;
   stroke-dasharray: 659.73;
   stroke-dashoffset: 0;
@@ -301,6 +292,7 @@ blockquote {
 #timerText {
   position: absolute;
   inset: 0;
+  z-index: 2;
   display: grid;
   place-items: center;
   font-size: 66px;
@@ -309,7 +301,6 @@ blockquote {
   letter-spacing: 4px;
 }
 
-/* TIME ADJUST */
 .time-adjust {
   display: flex;
   justify-content: center;
@@ -330,7 +321,6 @@ blockquote {
   background: rgba(111,134,255,.25);
 }
 
-/* CONTROLS */
 .controls,
 .mini-controls {
   display: flex;
@@ -348,7 +338,6 @@ blockquote {
   border-radius: 8px;
   font-size: 22px;
   cursor: pointer;
-  transition: .2s;
 }
 
 .controls button:hover,
@@ -356,6 +345,7 @@ blockquote {
   background: rgba(111,134,255,.25);
 }
 
+#settingsBtn,
 #stopAlarmBtn,
 #miniStopAlarmBtn {
   color: #ff70d4;
@@ -375,7 +365,6 @@ blockquote {
   font-weight: 800;
 }
 
-/* INPUT */
 .focus-input {
   background: rgba(255,255,255,.035);
   border: 1px solid rgba(255,255,255,.12);
@@ -402,11 +391,10 @@ blockquote {
   margin-bottom: 12px;
 }
 
-/* BREAKS */
 .breaks {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
 }
 
 .break {
@@ -420,26 +408,24 @@ blockquote {
 
 .break strong {
   display: block;
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 20px;
+  margin-bottom: 12px;
 }
 
 .break span {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .break.active {
   border-color: #ff70d4;
 }
 
-/* CENTER PANEL VIEWS */
 .panel-view {
   width: min(720px, 100%);
   background: rgba(255,255,255,.035);
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 22px;
   padding: 28px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.22);
 }
 
 .panel-view h2 {
@@ -454,7 +440,6 @@ blockquote {
 }
 
 .big-card,
-.settings-card,
 .stat-card {
   background: rgba(255,255,255,.055);
   border: 1px solid rgba(255,255,255,.1);
@@ -464,7 +449,7 @@ blockquote {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
 
@@ -505,14 +490,6 @@ blockquote {
   font-size: 18px;
 }
 
-#clearSessionsBtn {
-  margin-top: 12px;
-  background: rgba(255,112,212,.12);
-  border-color: rgba(255,112,212,.5);
-  color: #ffb6eb;
-}
-
-/* RIGHT PANEL */
 .right-panel {
   border-left: 1px solid rgba(255,255,255,.12);
   padding: 38px 22px;
@@ -545,7 +522,6 @@ iframe {
   border-radius: 14px;
 }
 
-/* MINI PREVIEW */
 .mini-header {
   display: flex;
   justify-content: space-between;
@@ -575,12 +551,7 @@ iframe {
   font-size: 17px;
 }
 
-/* MOBILE */
 @media (max-width: 1100px) {
-  body {
-    overflow: auto;
-  }
-
   .app {
     grid-template-columns: 1fr;
   }
@@ -600,6 +571,6 @@ iframe {
   }
 
   .breaks {
-    gap: 16px;
+    gap: 20px;
   }
 }
