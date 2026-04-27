@@ -1,69 +1,99 @@
+/* ELEMENTS */
 const timerText = document.getElementById("timerText");
+const miniTimerText = document.getElementById("miniTimerText");
 const progress = document.querySelector(".progress");
+
 const startPauseBtn = document.getElementById("startPauseBtn");
+const skipBtn = document.getElementById("skipBtn");
 const resetBtn = document.getElementById("resetBtn");
+const stopAlarmBtn = document.getElementById("stopAlarmBtn");
+
 const minusBtn = document.getElementById("minusBtn");
 const plusBtn = document.getElementById("plusBtn");
-const stopAlarmBtn = document.getElementById("stopAlarmBtn");
-const alarm = document.getElementById("alarm");
+
+const miniPlayBtn = document.getElementById("miniPlayBtn");
+const miniMinusBtn = document.getElementById("miniMinusBtn");
+const miniPlusBtn = document.getElementById("miniPlusBtn");
+const miniStopAlarmBtn = document.getElementById("miniStopAlarmBtn");
+
 const pipBtn = document.getElementById("pipBtn");
 
-/* TIMER */
+const focusInput = document.getElementById("focusInput");
+const saveFocusBtn = document.getElementById("saveFocusBtn");
+
+const calendarGrid = document.getElementById("calendarGrid");
+const sessionList = document.getElementById("sessionList");
+
+const alarm = document.getElementById("alarmSound");
+
+/* TIMER STATE */
 let totalSeconds = 1500;
 let remaining = totalSeconds;
 let running = false;
 let interval;
 
-function format(t){
-  let m = Math.floor(t/60).toString().padStart(2,"0");
-  let s = (t%60).toString().padStart(2,"0");
+/* FORMAT TIME */
+function formatTime(sec) {
+  const m = Math.floor(sec / 60).toString().padStart(2, "0");
+  const s = (sec % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
-function updateUI(){
-  timerText.innerText = format(remaining);
+/* UPDATE UI */
+function updateUI() {
+  timerText.innerText = formatTime(remaining);
+  miniTimerText.innerText = formatTime(remaining);
 
   const circumference = 660;
   const offset = circumference * (1 - remaining / totalSeconds);
   progress.style.strokeDashoffset = offset;
 
-  localStorage.setItem("pipTime", format(remaining));
+  localStorage.setItem("pipTime", formatTime(remaining));
 }
 
-function start(){
-  if(running) return;
+/* TIMER CONTROLS */
+function start() {
+  if (running) return;
   running = true;
   startPauseBtn.innerText = "Ⅱ";
 
-  interval = setInterval(()=>{
+  interval = setInterval(() => {
     remaining--;
     updateUI();
 
-    if(remaining <= 0){
-      clearInterval(interval);
-      running = false;
-      alarm.play().catch(()=>{});
+    if (remaining <= 0) {
+      finish();
     }
-  },1000);
+  }, 1000);
 }
 
-function pause(){
+function pause() {
   running = false;
-  startPauseBtn.innerText = "▶";
+  startPauseBtn.innerText = "▷";
   clearInterval(interval);
 }
 
-startPauseBtn.onclick = () => running ? pause() : start();
-
-resetBtn.onclick = () => {
+function reset() {
   pause();
   remaining = totalSeconds;
   updateUI();
-};
+}
 
+function finish() {
+  pause();
+  alarm.currentTime = 0;
+  alarm.play().catch(()=>{});
+
+  saveSession();
+}
+
+startPauseBtn.onclick = () => running ? pause() : start();
+resetBtn.onclick = reset;
+skipBtn.onclick = finish;
+
+/* TIME ADJUST */
 minusBtn.onclick = () => {
-  totalSeconds -= 300;
-  if(totalSeconds < 300) totalSeconds = 300;
+  totalSeconds = Math.max(300, totalSeconds - 300);
   remaining = totalSeconds;
   updateUI();
 };
@@ -74,117 +104,157 @@ plusBtn.onclick = () => {
   updateUI();
 };
 
+/* ALARM STOP */
 stopAlarmBtn.onclick = () => {
   alarm.pause();
   alarm.currentTime = 0;
 };
 
-/* NAVIGATION (FIXED) */
-document.querySelectorAll(".nav-btn").forEach(btn=>{
+/* MINI PLAYER CONTROLS */
+miniPlayBtn.onclick = () => running ? pause() : start();
+miniMinusBtn.onclick = minusBtn.onclick;
+miniPlusBtn.onclick = plusBtn.onclick;
+miniStopAlarmBtn.onclick = stopAlarmBtn.onclick;
+
+/* NAVIGATION */
+document.querySelectorAll(".nav-btn").forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    const view = btn.dataset.view;
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
 
-    document.getElementById("timerView").style.display = view==="timer"?"block":"none";
-    document.getElementById("calendarView").style.display = view==="calendar"?"block":"none";
-    document.getElementById("statsView").style.display = view==="stats"?"block":"none";
-    document.getElementById("settingsView").style.display = view==="settings"?"block":"block":"none";
+    document.getElementById(btn.dataset.view + "View").classList.add("active");
   };
 });
 
-/* CALENDAR */
-const calendarGrid = document.getElementById("calendarGrid");
+/* CALENDAR + SESSIONS */
 let sessions = JSON.parse(localStorage.getItem("sessions")) || [];
+let selectedDay = new Date().getDate();
 
-function renderCalendar(){
-  if(!calendarGrid) return;
+function renderCalendar() {
   calendarGrid.innerHTML = "";
 
-  for(let i=1;i<=30;i++){
+  for (let i = 1; i <= 30; i++) {
     const day = document.createElement("div");
     day.className = "day";
     day.innerText = i;
 
-    if(sessions.some(s=>s.day === i)){
+    if (sessions.some(s => s.day === i)) {
       day.classList.add("has-session");
     }
 
+    if (i === selectedDay) {
+      day.classList.add("selected");
+    }
+
     day.onclick = () => {
-      alert("Sessions: " + sessions.filter(s=>s.day===i).map(s=>s.task).join(", "));
+      selectedDay = i;
+      renderCalendar();
+      renderSessions();
     };
 
     calendarGrid.appendChild(day);
   }
 }
 
-renderCalendar();
+function renderSessions() {
+  sessionList.innerHTML = "";
+
+  const today = sessions.filter(s => s.day === selectedDay);
+
+  if (today.length === 0) {
+    sessionList.innerHTML = `<p style="color:#888;">No sessions</p>`;
+    return;
+  }
+
+  today.forEach(s => {
+    const el = document.createElement("div");
+    el.className = "session-item";
+    el.innerText = `${s.task} (${s.minutes}m)`;
+    sessionList.appendChild(el);
+  });
+}
 
 /* SAVE SESSION */
-const focusInput = document.getElementById("focusInput");
-
-startPauseBtn.addEventListener("dblclick", ()=>{
-  if(!focusInput.value) return;
+function saveSession() {
+  if (!focusInput.value) return;
 
   sessions.push({
     task: focusInput.value,
-    day: new Date().getDate()
+    minutes: totalSeconds / 60,
+    day: selectedDay
   });
 
   localStorage.setItem("sessions", JSON.stringify(sessions));
   renderCalendar();
-});
+  renderSessions();
+}
 
-/* QUOTES (PHILOSOPHERS) */
+saveFocusBtn.onclick = () => {
+  saveSession();
+  focusInput.value = "";
+};
+
+/* STATS */
+function updateStats() {
+  const total = sessions.length;
+  const minutes = sessions.reduce((a, s) => a + s.minutes, 0);
+
+  document.getElementById("totalSessions").innerText = total;
+  document.getElementById("totalMinutes").innerText = minutes;
+}
+
+/* QUOTES */
 const quotes = [
+  ["We suffer more in imagination than reality","Seneca"],
   ["The unexamined life is not worth living","Socrates"],
   ["Happiness depends upon ourselves","Aristotle"],
-  ["He who has a why can bear almost any how","Nietzsche"],
-  ["We suffer more often in imagination than reality","Seneca"],
-  ["Man is condemned to be free","Jean-Paul Sartre"]
+  ["He who has a why can bear almost any how","Nietzsche"]
 ];
 
-setInterval(()=>{
-  const q = quotes[Math.floor(Math.random()*quotes.length)];
+function rotateQuote() {
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
   document.getElementById("quote").innerText = `"${q[0]}" — ${q[1]}`;
-},7000);
+}
 
-/* MINIPLAYER (UPGRADED) */
-pipBtn.onclick = ()=>{
-  const win = window.open("","mini","width=300,height=300");
+setInterval(rotateQuote, 8000);
 
-  win.document.write(`
-    <body style="background:#0b0f1f;color:#6f86ff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;">
-    <h2 id="time">00:00</h2>
+/* MINIPLAYER WINDOW */
+pipBtn.onclick = () => {
+  const w = window.open("", "mini", "width=260,height=260");
 
-    <button onclick="window.opener.postMessage('toggle')">▶/Ⅱ</button>
-    <button onclick="window.opener.postMessage('reset')">Reset</button>
-    <button onclick="window.opener.postMessage('alarm')">Stop Alarm</button>
+  w.document.write(`
+    <body style="background:#0b0f1f;color:#6f86ff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;">
+      <h2 id="t">00:00</h2>
 
-    <script>
-      setInterval(()=>{
-        document.getElementById("time").innerText = localStorage.getItem("pipTime");
-      },300);
-    <\/script>
+      <button onclick="window.opener.postMessage('toggle')">Play/Pause</button>
+      <button onclick="window.opener.postMessage('minus')">-5</button>
+      <button onclick="window.opener.postMessage('plus')">+5</button>
+      <button onclick="window.opener.postMessage('alarm')">Stop Alarm</button>
+
+      <script>
+        setInterval(()=>{
+          document.getElementById("t").innerText =
+          localStorage.getItem("pipTime");
+        },300);
+      <\/script>
     </body>
   `);
 };
 
-/* RECEIVE PiP CONTROLS */
-window.addEventListener("message",(e)=>{
-  if(e.data==="toggle"){
-    running ? pause() : start();
-  }
-  if(e.data==="reset"){
-    remaining = totalSeconds;
-    updateUI();
-  }
-  if(e.data==="alarm"){
-    alarm.pause();
-    alarm.currentTime=0;
-  }
+/* RECEIVE MINIPLAYER COMMANDS */
+window.addEventListener("message", (e) => {
+  if (e.data === "toggle") running ? pause() : start();
+  if (e.data === "minus") minusBtn.onclick();
+  if (e.data === "plus") plusBtn.onclick();
+  if (e.data === "alarm") stopAlarmBtn.onclick();
 });
 
 /* INIT */
 updateUI();
+renderCalendar();
+renderSessions();
+updateStats();
+rotateQuote();
