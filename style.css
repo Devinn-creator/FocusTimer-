@@ -36,8 +36,6 @@ button {
   overflow: hidden;
 }
 
-/* LEFT SIDEBAR */
-
 .sidebar {
   height: 100vh;
   padding: 26px 12px 18px;
@@ -62,7 +60,7 @@ button {
   grid-template-columns: 1fr 1fr;
   gap: 14px 18px;
   padding-bottom: 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255,255,255,.1);
 }
 
 .nav-btn {
@@ -82,15 +80,13 @@ button {
 .nav-btn.active,
 .nav-btn:hover {
   color: #6f86ff;
-  background: rgba(111, 134, 255, 0.16);
-  border-color: rgba(111, 134, 255, 0.42);
+  background: rgba(111,134,255,.16);
+  border-color: rgba(111,134,255,.42);
 }
-
-/* CALENDAR */
 
 .calendar-card {
   padding: 20px 0 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255,255,255,.1);
 }
 
 .calendar-header {
@@ -140,23 +136,29 @@ button {
   display: grid;
   place-items: center;
   position: relative;
-  color: #edf0ff;
-  font-size: 18px;
-  transition: 0.2s;
+  font-size: 15px;
+  transition: .2s;
+  color: #101426;
+  font-weight: 800;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(255,255,255,.3);
 }
 
 .day:hover {
   transform: scale(1.18);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,1);
 }
 
 .day.muted {
-  opacity: 0.45;
+  color: #101426;
+  background: rgba(255,255,255,.42);
+  opacity: .75;
 }
 
 .day.selected {
+  color: white;
   background: #6f86ff;
-  box-shadow: 0 0 25px rgba(111, 134, 255, 0.8);
+  box-shadow: 0 0 25px rgba(111,134,255,.8);
 }
 
 .day.has-session::after {
@@ -168,8 +170,6 @@ button {
   border-radius: 50%;
   background: #ff70d4;
 }
-
-/* SESSIONS */
 
 .sessions {
   padding-top: 22px;
@@ -191,8 +191,8 @@ button {
 #applySettingsBtn,
 #clearSessionsBtn,
 #setManualBtn {
-  background: rgba(111, 134, 255, 0.2);
-  border: 1px solid rgba(111, 134, 255, 0.7);
+  background: rgba(111,134,255,.2);
+  border: 1px solid rgba(111,134,255,.7);
   color: #aab6ff;
   border-radius: 9px;
   padding: 10px 15px;
@@ -200,9 +200,24 @@ button {
   font-size: 15px;
 }
 
+#sessionList {
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#sessionList::-webkit-scrollbar {
+  width: 6px;
+}
+
+#sessionList::-webkit-scrollbar-thumb {
+  background: rgba(111,134,255,.55);
+  border-radius: 20px;
+}
+
 .session-item {
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.1);
   border-radius: 13px;
   padding: 13px 14px;
   display: grid;
@@ -243,10 +258,8 @@ blockquote {
   color: #f0ecff;
   font-size: 17px;
   line-height: 1.45;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255,255,255,.08);
 }
-
-/* CENTER */
 
 .main {
   height: 100vh;
@@ -272,8 +285,6 @@ blockquote {
   margin: 0 auto;
 }
 
-/* TIMER */
-
 .timer-ring {
   width: 390px;
   height: 390px;
@@ -288,7 +299,7 @@ blockquote {
   position: absolute;
   inset: 24px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(111, 134, 255, 0.12), transparent 62%);
+  background: radial-gradient(circle, rgba(111,134,255,.12), transparent 62%);
   filter: blur(24px);
   pointer-events: none;
 }
@@ -309,7 +320,7 @@ blockquote {
 }
 
 .track {
-  stroke: rgba(255, 255, 255, 0.04);
+  stroke: rgba(255,255,255,.04);
 }
 
 .progress {
@@ -317,8 +328,8 @@ blockquote {
   stroke-linecap: round;
   stroke-dasharray: 659.73;
   stroke-dashoffset: 0;
-  filter: drop-shadow(0 0 18px rgba(111, 134, 255, 0.78));
-  transition: stroke-dashoffset 0.35s linear;
+  filter: drop-shadow(0 0 18px rgba(111,134,255,.78));
+  transition: stroke-dashoffset .35s linear;
 }
 
 #timerText {
@@ -332,8 +343,6 @@ blockquote {
   letter-spacing: 4px;
 }
 
-/* TIMER ADJUST */
-
 .time-adjust {
   display: flex;
   justify-content: center;
@@ -345,8 +354,8 @@ blockquote {
 .time-adjust button,
 .time-adjust input {
   height: 44px;
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.12);
   color: #edf0ff;
   border-radius: 11px;
   font-weight: 800;
@@ -360,7 +369,7 @@ blockquote {
   width: 76px;
   text-align: center;
   outline: none;
-  opacity: 0.85;
+  opacity: .85;
 }
 
 .time-adjust input::placeholder {
@@ -368,11 +377,9 @@ blockquote {
 }
 
 .time-adjust input:focus {
-  border-color: rgba(111, 134, 255, 0.6);
-  box-shadow: 0 0 14px rgba(111, 134, 255, 0.2);
+  border-color: rgba(111,134,255,.6);
+  box-shadow: 0 0 14px rgba(111,134,255,.2);
 }
-
-/* CONTROLS */
 
 .controls,
 .mini-controls {
@@ -385,8 +392,8 @@ blockquote {
   width: 78px;
   height: 48px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255,255,255,.11);
+  background: rgba(255,255,255,.09);
   color: #fff;
   font-size: 24px;
 }
@@ -400,17 +407,15 @@ blockquote {
 .controls button:hover,
 .time-adjust button:hover,
 .mini-controls button:hover {
-  background: rgba(111, 134, 255, 0.26);
+  background: rgba(111,134,255,.26);
 }
-
-/* INPUT */
 
 .focus-input {
   width: 430px;
   max-width: 100%;
   margin: 30px auto 32px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.12);
   border-radius: 14px;
   padding: 18px;
   text-align: left;
@@ -425,14 +430,12 @@ blockquote {
 .focus-input input {
   width: 100%;
   padding: 16px;
-  background: rgba(4, 7, 18, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(4,7,18,.55);
+  border: 1px solid rgba(255,255,255,.12);
   border-radius: 10px;
   color: white;
   font-size: 15px;
 }
-
-/* BREAKS */
 
 .breaks {
   display: grid;
@@ -462,16 +465,14 @@ blockquote {
   border-color: #ff70d4;
 }
 
-/* PANELS */
-
 .panel-view {
   max-width: 640px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.11);
   border-radius: 20px;
   padding: 28px;
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 55px rgba(0,0,0,.25);
 }
 
 .panel-view h2 {
@@ -488,8 +489,8 @@ blockquote {
 .big-card,
 .stat-card,
 .settings-card {
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.1);
   border-radius: 16px;
   padding: 18px;
 }
@@ -520,8 +521,8 @@ blockquote {
 .settings-row button {
   width: 48px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.08);
   color: white;
   font-size: 20px;
 }
@@ -530,46 +531,49 @@ blockquote {
   flex: 1;
   padding: 14px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(4, 7, 18, 0.55);
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(4,7,18,.55);
   color: white;
   font-size: 18px;
 }
 
 #clearSessionsBtn {
   margin-left: 10px;
-  background: rgba(255, 112, 212, 0.12);
-  border-color: rgba(255, 112, 212, 0.55);
+  background: rgba(255,112,212,.12);
+  border-color: rgba(255,112,212,.55);
   color: #ffc0ef;
 }
 
-/* RIGHT PANEL */
-
 .right-panel {
   height: 100vh;
-  padding: 30px 22px;
-  background: rgba(10, 14, 31, 0.62);
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 24px 22px;
+  background: rgba(10,14,31,.62);
+  border-left: 1px solid rgba(255,255,255,.12);
   overflow: hidden;
 }
 
 .music-card,
 .pip-card,
 .mini-preview {
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.11);
   border-radius: 18px;
   padding: 18px;
   margin-bottom: 18px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 18px 45px rgba(0,0,0,.25);
 }
 
 .music-card {
-  height: 410px;
+  height: auto;
+  padding-bottom: 18px;
 }
 
 .spotify-wrap {
-  height: 320px;
+  height: 150px;
+}
+
+.spotify-wrap iframe {
+  height: 150px;
 }
 
 .music-card h2,
@@ -590,11 +594,13 @@ iframe {
 }
 
 .pip-card {
-  height: 150px;
+  height: auto;
+  padding: 18px;
 }
 
 .mini-preview {
-  height: 245px;
+  height: 225px;
+  padding: 16px;
 }
 
 .mini-header {
@@ -604,9 +610,9 @@ iframe {
 }
 
 .mini-timer-ring {
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 12px;
+  width: 125px;
+  height: 125px;
+  margin: 0 auto 10px;
   position: relative;
   border-radius: 50%;
 }
@@ -625,14 +631,14 @@ iframe {
 }
 
 .mini-track {
-  stroke: rgba(255, 255, 255, 0.04);
+  stroke: rgba(255,255,255,.04);
 }
 
 .mini-progress {
   stroke: #6f86ff;
   stroke-linecap: round;
   stroke-dasharray: 659.73;
-  filter: drop-shadow(0 0 14px rgba(111, 134, 255, 0.75));
+  filter: drop-shadow(0 0 14px rgba(111,134,255,.75));
 }
 
 #miniTimerText {
@@ -641,21 +647,19 @@ iframe {
   display: grid;
   place-items: center;
   color: #6f86ff;
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 900;
 }
 
 .mini-controls button {
-  width: 45px;
-  height: 34px;
+  width: 39px;
+  height: 31px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255,255,255,.11);
+  background: rgba(255,255,255,.09);
   color: white;
-  font-size: 17px;
+  font-size: 15px;
 }
-
-/* FIT SMALLER SCREENS */
 
 @media (max-height: 850px) {
   .timer-ring {
@@ -672,19 +676,12 @@ iframe {
     margin: 22px auto 24px;
   }
 
-  .music-card {
-    height: 370px;
-  }
-
-  .spotify-wrap {
-    height: 280px;
-  }
-
-  .pip-card {
-    height: 130px;
-  }
-
   .mini-preview {
-    height: 220px;
+    height: 205px;
+  }
+
+  .mini-timer-ring {
+    width: 112px;
+    height: 112px;
   }
 }
