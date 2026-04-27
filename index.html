@@ -6,16 +6,18 @@
   <title>FocusTimer</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="app">
+    <!-- LEFT SIDEBAR -->
     <aside class="sidebar">
       <h1>Focus<span>Timer</span></h1>
 
-      <nav>
-        <button class="nav-btn active" data-view="timer">◷ Timer</button>
-        <button class="nav-btn" data-view="calendar">▣ Calendar</button>
-        <button class="nav-btn" data-view="stats">▥ Stats</button>
-        <button class="nav-btn" data-view="settings">⚙ Settings</button>
+      <nav class="top-nav">
+        <button class="nav-btn active" data-view="timerView">◷ <span>Timer</span></button>
+        <button class="nav-btn" data-view="calendarPanel">▣ <span>Calendar</span></button>
+        <button class="nav-btn" data-view="statsPanel">▥ <span>Stats</span></button>
+        <button class="nav-btn" data-view="settingsPanel">⚙ <span>Settings</span></button>
       </nav>
 
       <section class="calendar-card">
@@ -37,89 +39,117 @@
           <h3>Today's Sessions</h3>
           <button id="addSessionBtn">+ Add</button>
         </div>
+
         <div id="sessionList"></div>
       </section>
 
       <blockquote id="quote">
-        “We suffer more often in imagination than in reality.” — Seneca
+        “Discipline is choosing between what you want now and what you want most.” — Abraham Lincoln
       </blockquote>
     </aside>
 
+    <!-- CENTER -->
     <main class="main">
-      <section id="timerView" class="timer-section view active">
-        <div class="timer-ring">
-          <svg viewBox="0 0 260 260">
-            <circle class="track" cx="130" cy="130" r="105"></circle>
-            <circle class="progress" cx="130" cy="130" r="105"></circle>
-          </svg>
-          <div id="timerText">25:00</div>
-        </div>
+      <!-- TIMER VIEW -->
+      <section id="timerView" class="main-view active">
+        <div class="timer-section">
+          <div class="timer-ring">
+            <svg viewBox="0 0 260 260" aria-hidden="true">
+              <circle class="track" cx="130" cy="130" r="105"></circle>
+              <circle class="progress" cx="130" cy="130" r="105"></circle>
+            </svg>
 
-        <div class="time-adjust">
-          <button id="minusBtn">− 5 min</button>
-          <button id="plusBtn">+ 5 min</button>
-        </div>
+            <div id="timerText">25:00</div>
+          </div>
 
-        <div class="controls">
-          <button id="startPauseBtn">▷</button>
-          <button id="skipBtn">▷|</button>
-          <button id="resetBtn">↻</button>
-          <button id="settingsBtn">≡</button>
-          <button id="stopAlarmBtn">🔕</button>
-        </div>
+          <div class="time-adjust">
+            <button id="minusBtn">− 5 min</button>
+            <button id="plusBtn">+ 5 min</button>
+          </div>
 
-        <div class="session-status">
-          <span id="modeLabel">Work Session</span>
-          <span>↻ <span id="cycleLabel">4/4</span></span>
-        </div>
+          <div class="controls">
+            <button id="startPauseBtn" title="Start / Pause">▷</button>
+            <button id="skipBtn" title="Finish Session">▷|</button>
+            <button id="resetBtn" title="Reset">↻</button>
+            <button id="settingsBtn" title="Timer Settings">≡</button>
+            <button id="stopAlarmBtn" title="Stop Alarm">🔕</button>
+          </div>
 
-        <div class="focus-input">
-          <label>What are you focusing on?</label>
-          <input id="focusInput" type="text" placeholder="e.g. Study for exam, Read a book..." />
-          <button id="saveFocusBtn">Save to Calendar</button>
-        </div>
+          <div class="session-status">
+            <span id="modeLabel">Work Session</span>
+            <span>↻ <span id="cycleLabel">4/4</span></span>
+          </div>
 
-        <div class="breaks">
-          <button class="break active" data-minutes="5">
-            <strong>Short Break</strong>
-            <span>5 min</span>
-          </button>
+          <div class="focus-input">
+            <label for="focusInput">What are you focusing on?</label>
+            <input id="focusInput" type="text" placeholder="e.g. Study for exam, Read a book..." />
+          </div>
 
-          <button class="break" data-minutes="15">
-            <strong>Long Break</strong>
-            <span>15 min</span>
-          </button>
+          <div class="breaks">
+            <button class="break active" data-minutes="5" data-label="Short Break">
+              <strong>Short Break</strong>
+              <span>5 min</span>
+            </button>
+
+            <button class="break" data-minutes="15" data-label="Long Break">
+              <strong>Long Break</strong>
+              <span>15 min</span>
+            </button>
+          </div>
         </div>
       </section>
 
-      <section id="calendarView" class="view panel-view">
+      <!-- CALENDAR PANEL -->
+      <section id="calendarPanel" class="main-view panel-view">
         <h2>Calendar</h2>
-        <p>Pick a date on the left calendar to view saved sessions.</p>
+        <p>Select a day on the left calendar to view saved focus sessions.</p>
         <div id="calendarSessionList" class="big-card"></div>
       </section>
 
-      <section id="statsView" class="view panel-view">
+      <!-- STATS PANEL -->
+      <section id="statsPanel" class="main-view panel-view">
         <h2>Stats</h2>
-        <p>Your focus progress.</p>
+        <p>Your focus progress updates automatically.</p>
+
         <div class="stats-grid">
-          <div class="stat-card"><span>Total Sessions</span><strong id="totalSessions">0</strong></div>
-          <div class="stat-card"><span>Total Minutes</span><strong id="totalMinutes">0</strong></div>
-          <div class="stat-card"><span>Today</span><strong id="todayMinutes">0</strong></div>
+          <div class="stat-card">
+            <span>Total Sessions</span>
+            <strong id="totalSessions">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>Total Minutes</span>
+            <strong id="totalMinutes">0</strong>
+          </div>
+
+          <div class="stat-card">
+            <span>Today</span>
+            <strong id="todayMinutes">0</strong>
+          </div>
         </div>
       </section>
 
-      <section id="settingsView" class="view panel-view">
+      <!-- SETTINGS PANEL -->
+      <section id="settingsPanel" class="main-view panel-view">
         <h2>Settings</h2>
-        <p>Timer length changes in 5-minute steps.</p>
-        <div class="settings-row">
-          <button id="settingsMinus">−</button>
-          <input id="settingsMinutes" type="number" min="5" step="5" value="25" />
-          <button id="settingsPlus">+</button>
+        <p>Adjust the focus timer in 5-minute increments.</p>
+
+        <div class="settings-card">
+          <label for="settingsMinutes">Timer length</label>
+
+          <div class="settings-row">
+            <button id="settingsMinus">−</button>
+            <input id="settingsMinutes" type="number" min="5" step="5" value="25" />
+            <button id="settingsPlus">+</button>
+          </div>
+
+          <button id="applySettingsBtn">Apply Timer Length</button>
+          <button id="clearSessionsBtn">Clear Saved Sessions</button>
         </div>
-        <button id="applySettingsBtn">Apply</button>
       </section>
     </main>
 
+    <!-- RIGHT PANEL -->
     <aside class="right-panel">
       <section class="music-card">
         <h2>Lo-fi Beats</h2>
@@ -153,6 +183,7 @@
 
         <div class="mini-controls">
           <button id="miniPlayBtn">▷</button>
+          <button id="miniSkipBtn">▷|</button>
           <button id="miniMinusBtn">−</button>
           <button id="miniPlusBtn">+</button>
           <button id="miniStopAlarmBtn">🔕</button>
@@ -162,7 +193,7 @@
   </div>
 
   <audio id="alarmSound" loop preload="auto">
-    <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
+    <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg" />
   </audio>
 
   <script src="script.js"></script>
