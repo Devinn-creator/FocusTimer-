@@ -1,137 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FocusTimer</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusTimer</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <h1>Focus<span>Timer</span></h1>
+<div class="app">
 
-      <nav>
-        <button class="nav-btn active">◷ Timer</button>
-        <button class="nav-btn">▣ Calendar</button>
-        <button class="nav-btn">▥ Stats</button>
-        <button class="nav-btn">⚙ Settings</button>
-      </nav>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <h1>Focus<span>Timer</span></h1>
 
-      <section class="calendar-card">
-        <div class="calendar-header">
-          <button id="prevMonth">‹</button>
-          <h2 id="monthLabel">May 2025</h2>
-          <button id="nextMonth">›</button>
-        </div>
+  <nav>
+    <button class="nav-btn active" data-view="timer">Timer</button>
+    <button class="nav-btn" data-view="calendar">Calendar</button>
+    <button class="nav-btn" data-view="stats">Stats</button>
+    <button class="nav-btn" data-view="settings">Settings</button>
+  </nav>
 
-        <div class="weekdays">
-          <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
-        </div>
+  <section id="calendarView" class="view hidden">
+    <div id="calendarGrid" class="calendar-grid"></div>
+  </section>
 
-        <div id="calendarGrid" class="calendar-grid"></div>
-      </section>
+  <section id="statsView" class="view hidden">
+    <h3>Total Sessions</h3>
+    <p id="totalSessions">0</p>
+  </section>
 
-      <section class="sessions">
-        <div class="section-title">
-          <h3>Today's Sessions</h3>
-          <button id="addSessionBtn">+ Add</button>
-        </div>
-        <div id="sessionList"></div>
-      </section>
+  <section id="settingsView" class="view hidden">
+    <h3>Settings</h3>
+    <label>Work Minutes</label>
+    <input id="workInput" type="number" value="25">
+  </section>
 
-      <blockquote id="quote">
-        “Discipline is choosing between what you want now and what you want most.”
-      </blockquote>
-    </aside>
+  <blockquote id="quote"></blockquote>
+</aside>
 
-    <main class="main">
-      <section class="timer-section">
-        <div class="timer-ring">
-          <svg viewBox="0 0 260 260">
-            <circle class="track" cx="130" cy="130" r="105"></circle>
-            <circle class="progress" cx="130" cy="130" r="105"></circle>
-          </svg>
-          <div id="timerText">25:00</div>
-        </div>
+<!-- MAIN -->
+<main class="main">
 
-        <div class="controls">
-          <button id="startPauseBtn">▷</button>
-          <button id="skipBtn">▷|</button>
-          <button id="resetBtn">↻</button>
-          <button id="settingsBtn">≡</button>
-        </div>
+<section id="timerView" class="view active">
 
-        <div class="session-status">
-          <span id="modeLabel">Work Session</span>
-          <span>↻ <span id="cycleLabel">4/4</span></span>
-        </div>
+<div class="timer-ring">
+<svg viewBox="0 0 260 260">
+<circle class="track" cx="130" cy="130" r="105"></circle>
+<circle class="progress" cx="130" cy="130" r="105"></circle>
+</svg>
+<div id="timerText">25:00</div>
+</div>
 
-        <div class="focus-input">
-          <label>What are you focusing on?</label>
-          <input id="focusInput" type="text" placeholder="e.g. Study for exam, Read a book..." />
-          <button id="saveFocusBtn">Save to Calendar</button>
-        </div>
+<div class="time-adjust">
+<button id="minusBtn">-5</button>
+<button id="plusBtn">+5</button>
+</div>
 
-        <div class="breaks">
-          <button class="break active" data-minutes="5">
-            <strong>Short Break</strong>
-            <span>5 min</span>
-          </button>
+<div class="controls">
+<button id="startPauseBtn">▶</button>
+<button id="resetBtn">↻</button>
+<button id="stopAlarmBtn">🔕</button>
+</div>
 
-          <button class="break" data-minutes="15">
-            <strong>Long Break</strong>
-            <span>15 min</span>
-          </button>
-        </div>
-      </section>
-    </main>
+<input id="focusInput" placeholder="What are you focusing on?">
 
-    <aside class="right-panel">
-      <section class="music-card">
-        <h2>Lo-fi Beats</h2>
-        <p>Spotify Playlist</p>
+</section>
+</main>
 
-        <iframe
-          src="https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator"
-          width="100%"
-          height="352"
-          frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy">
-        </iframe>
-      </section>
+<!-- RIGHT -->
+<aside class="right-panel">
 
-      <section class="pip-card">
-        <h2>Picture-in-Picture</h2>
-        <p>Keep the timer on top while you focus on other things.</p>
-        <button id="pipBtn">Open PiP ↗</button>
-      </section>
+<div class="music-card">
+<h3>Lo-fi Beats</h3>
 
-      <section class="mini-preview">
-        <div class="mini-header">
-          <h3>FocusTimer</h3>
-          <span>⚙ ×</span>
-        </div>
+<iframe style="border-radius:12px"
+src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS"
+width="100%" height="352"
+frameborder="0"
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+</iframe>
+</div>
 
-        <div class="mini-ring">
-          <span id="miniTimerText">25:00</span>
-        </div>
+<div class="pip-card">
+<h3>Miniplayer</h3>
+<button id="pipBtn">Open</button>
+</div>
 
-        <div class="mini-controls">
-          <button>▷</button>
-          <button>▷|</button>
-          <button>↻</button>
-          <button>≡</button>
-        </div>
-      </section>
-    </aside>
-  </div>
+</aside>
 
-  <audio id="alarmSound" preload="auto">
-    <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
-  </audio>
+</div>
 
-  <script src="script.js"></script>
+<audio id="alarm">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+</audio>
+
+<script src="script.js"></script>
 </body>
 </html>
