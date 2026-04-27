@@ -1,1 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusTimer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1>Focus<span>Timer</span></h1>
 
+      <nav>
+        <button class="nav-btn active" data-view="timer">◷ Timer</button>
+        <button class="nav-btn" data-view="calendar">▣ Calendar</button>
+        <button class="nav-btn" data-view="stats">▥ Stats</button>
+        <button class="nav-btn" data-view="settings">⚙ Settings</button>
+      </nav>
+
+      <section class="calendar-card">
+        <div class="calendar-header">
+          <button id="prevMonth">‹</button>
+          <h2 id="monthLabel">May 2025</h2>
+          <button id="nextMonth">›</button>
+        </div>
+
+        <div class="weekdays">
+          <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </section>
+
+      <section class="sessions">
+        <div class="section-title">
+          <h3 id="sessionTitle">Today's Sessions</h3>
+          <button id="addSessionBtn">+ Add</button>
+        </div>
+        <div id="sessionList"></div>
+      </section>
+
+      <blockquote id="quote">
+        “We suffer more often in imagination than in reality.” — Seneca
+      </blockquote>
+    </aside>
+
+    <main class="main">
+      <section id="timerView" class="view active">
+        <div class="timer-section">
+          <div class="timer-ring">
+            <div class="ring-glow"></div>
+
+            <svg viewBox="0 0 260 260">
+              <defs>
+                <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#6f86ff" />
+                  <stop offset="60%" stop-color="#8a72ff" />
+                  <stop offset="100%" stop-color="#ff70d4" />
+                </linearGradient>
+              </defs>
+
+              <circle class="track" cx="130" cy="130" r="105"></circle>
+              <circle class="progress" cx="130" cy="130" r="105"></circle>
+            </svg>
+
+            <div id="timerText">25:00</div>
+          </div>
+
+          <div class="time-adjust">
+            <button id="minusBtn">− 5 min</button>
+            <button id="plusBtn">+ 5 min</button>
+          </div>
+
+          <div class="controls">
+            <button id="startPauseBtn">▷</button>
+            <button id="skipBtn">▷|</button>
+            <button id="resetBtn">↻</button>
+            <button id="stopAlarmBtn">🔕</button>
+          </div>
+
+          <div class="session-status">
+            <span id="modeLabel">Work Session</span>
+            <span>↻ <span id="cycleLabel">4/4</span></span>
+          </div>
+
+          <div class="focus-input">
+            <label>What are you focusing on?</label>
+            <input id="focusInput" type="text" placeholder="e.g. Study for exam, Read a book..." />
+            <button id="saveFocusBtn">Save to Calendar</button>
+          </div>
+
+          <div class="breaks">
+            <button class="break active" data-minutes="25" data-label="Work Session">
+              <strong>Focus</strong>
+              <span>25 min</span>
+            </button>
+
+            <button class="break" data-minutes="5" data-label="Short Break">
+              <strong>Short Break</strong>
+              <span>5 min</span>
+            </button>
+
+            <button class="break" data-minutes="15" data-label="Long Break">
+              <strong>Long Break</strong>
+              <span>15 min</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="calendarView" class="view">
+        <div class="panel-view">
+          <h2>Calendar</h2>
+          <p>Select any date from the left calendar to view saved focus sessions.</p>
+          <div class="big-card">
+            <h3 id="selectedDateLabel">Selected Day</h3>
+            <div id="calendarSessionList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="statsView" class="view">
+        <div class="panel-view">
+          <h2>Stats</h2>
+          <p>Your FocusTimer progress.</p>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span>Total Sessions</span>
+              <strong id="totalSessions">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Total Minutes</span>
+              <strong id="totalMinutes">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Today</span>
+              <strong id="todayMinutes">0</strong>
+            </div>
+
+            <div class="stat-card">
+              <span>Selected Day</span>
+              <strong id="selectedDayMinutes">0</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view">
+        <div class="panel-view">
+          <h2>Settings</h2>
+          <p>Change the timer in 5-minute increments.</p>
+
+          <div class="settings-card">
+            <label>Default focus timer</label>
+
+            <div class="settings-row">
+              <button id="settingsMinus">−</button>
+              <input id="settingsMinutes" type="number" min="5" step="5" value="25" />
+              <button id="settingsPlus">+</button>
+            </div>
+
+            <button id="applySettingsBtn">Apply</button>
+            <button id="clearSessionsBtn">Clear Saved Sessions</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right-panel">
+      <section class="music-card">
+        <h2>Lo-fi Beats</h2>
+        <p>Spotify Playlist</p>
+
+        <iframe
+          src="https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator"
+          width="100%"
+          height="352"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </section>
+
+      <section class="pip-card">
+        <h2>Miniplayer</h2>
+        <p>Keep the timer open while you focus on other things.</p>
+        <button id="pipBtn">Open Miniplayer ↗</button>
+      </section>
+
+      <section class="mini-preview">
+        <div class="mini-header">
+          <h3>FocusTimer</h3>
+          <span>⚙ ×</span>
+        </div>
+
+        <div class="mini-ring">
+          <span id="miniTimerText">25:00</span>
+        </div>
+
+        <div class="mini-controls">
+          <button id="miniPlayBtn">▷</button>
+          <button id="miniMinusBtn">−</button>
+          <button id="miniPlusBtn">+</button>
+          <button id="miniStopAlarmBtn">🔕</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <audio id="alarmSound" loop preload="auto">
+    <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
+  </audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
