@@ -1,3 +1,109 @@
+const SUPABASE_URL = "https://kmgoawqcjgctfedmmrpd.supabase.co/rest/v1/
+";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttZ29hd3FjamdjdGZlZG1tcnBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDM2MzUsImV4cCI6MjA5MzQ3OTYzNX0.Tlm8F5wz5MtajGs47nPJX9VRtMxQBw2zgJvM_hrHU2E
+";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+async function checkUser() {
+  const { data } = await supabaseClient.auth.getUser();
+  currentUser = data.user;
+  loadSessions();
+}
+
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Account created. Check your email.");
+  }
+});
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  currentUser = data.user;
+  alert("Logged in");
+  loadSessions();
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  alert("Logged out");
+});
+async function saveSession(focusTitle, minutes) {
+  if (!currentUser) {
+    alert("Please log in first.");
+    return;
+  }
+
+  const { error } = await supabaseClient.from("sessions").insert({
+    user_id: currentUser.id,
+    title: focusTitle,
+    minutes: minutes,
+    completed_at: new Date().toISOString()
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    loadSessions();
+  }
+}
+async function loadSessions() {
+  if (!currentUser) return;
+
+  const { data, error } = await supabaseClient
+    .from("sessions")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .order("completed_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const list = document.getElementById("sessionsList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  data.forEach(session => {
+    const item = document.createElement("div");
+    item.className = "session-item";
+    item.innerHTML = `
+      <strong>${session.title || "Focus Session"}</strong>
+      <span>${session.minutes} min</span>
+    `;
+
+    list.appendChild(item);
+  });
+}
+
+checkUser();
+
 const timerText = document.getElementById("timerText");
 const miniTimerText = document.getElementById("miniTimerText");
 const progress = document.querySelector(".progress");
