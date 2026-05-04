@@ -198,6 +198,12 @@ function finish(playSound=false){
   let used = Math.round((totalSeconds - remainingSeconds)/60);
   let task = focusInput.value || "Session";
 
+function finish(playSound=false){
+  pause();
+
+  let used = Math.round((totalSeconds - remainingSeconds)/60);
+  let task = focusInput.value || "Session";
+
   sessions.push({
     task,
     minutes: used,
@@ -207,6 +213,18 @@ function finish(playSound=false){
 
   localStorage.setItem("sessions", JSON.stringify(sessions));
 
+  // 🔥 This sends the completed session to Supabase
+  saveSession(task, used);
+
+  if(playSound){
+    alarmSound.play().catch(()=>{});
+  }
+
+  renderSessions();
+  renderCalendar();
+  remainingSeconds = totalSeconds;
+  updateUI();
+}
   if(playSound){
     alarmSound.play().catch(()=>{});
   }
