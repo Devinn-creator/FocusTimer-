@@ -11,7 +11,56 @@ async function checkUser() {
   currentUser = data.user;
   loadSessions();
 }
+const authMessage = document.getElementById("authMessage"); // Add a <p id="authMessage"></p> to your HTML to see errors!
 
+// SIGN UP
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  
+  if(authMessage) authMessage.textContent = "Loading...";
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    if(authMessage) authMessage.textContent = error.message;
+    alert(error.message);
+  } else {
+    if(authMessage) authMessage.textContent = "Account created! You can now log in.";
+    alert("Account created!");
+  }
+});
+
+// LOG IN
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  
+  if(authMessage) authMessage.textContent = "Loading...";
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if (error) {
+    if(authMessage) authMessage.textContent = error.message;
+    alert(error.message);
+  } else {
+    // Successfully logged in! 
+    currentUser = data.user;
+    
+    // Hide auth screen and show main app (if you are using the display toggle method)
+    document.querySelector('.auth-box').style.display = 'none';
+    document.querySelector('.app').style.display = 'grid'; // or 'flex' / 'block'
+    
+    // Load their data
+    loadSessionsFromSupabase();
+  }
+});
 document.getElementById("signupBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
