@@ -1,109 +1,123 @@
-const SUPABASE_URL = "https://kmgoawqcjgctfedmmrpd.supabase.co/rest/v1/
-";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttZ29hd3FjamdjdGZlZG1tcnBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDM2MzUsImV4cCI6MjA5MzQ3OTYzNX0.Tlm8F5wz5MtajGs47nPJX9VRtMxQBw2zgJvM_hrHU2E
-";
+const SUPABASE_URL = "https://kmgoawqcjgctfedmmrpd.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "sb_publishable_nTJ835cKc9LnxkWcNzf4rA_1q90q1OL";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// State Variables
 let currentUser = null;
-async function checkUser() {
-  const { data } = await supabaseClient.auth.getUser();
-  currentUser = data.user;
-  loadSessions();
-}
+let sessions = []; // Fetched from Supabase
+
+// DOM Elements - Auth
+const authContainer = document.getElementById("authContainer");
+const appContainer = document.getElementById("appContainer");
+const authMessage = document.getElementById("authMessage");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+// Set up Broadcast Channel to replace localStorage for Miniplayer sync
+const timerChannel = new BroadcastChannel('timer_sync');
+
+/* AUTH LOGIC */
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    currentUser = session.user;
+    authContainer.style.display = "none";
+    appContainer.style.display = "grid";
+    loadSessionsFromSupabase();
+  } else {
+    currentUser = null;
+    authContainer.style.display = "flex";
+    appContainer.style.display = "none";
+  }
+});
 
 document.getElementById("signupBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  authMessage.textContent = "Loading...";
 
-  const { error } = await supabaseClient.auth.signUp({
-    email,
-    password
-  });
-
+  const { error } = await supabaseClient.auth.signUp({ email, password });
   if (error) {
-    alert(error.message);
+    authMessage.textContent = error.message;
   } else {
-    alert("Account created. Check your email.");
+    authMessage.textContent = "Success! Please log in (or check email for confirmation).";
   }
 });
 
 document.getElementById("loginBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  authMessage.textContent = "Loading...";
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) {
-    alert(error.message);
-    return;
+    authMessage.textContent = error.message;
   }
-
-  currentUser = data.user;
-  alert("Logged in");
-  loadSessions();
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
-  currentUser = null;
-  alert("Logged out");
+  emailInput.value = "";
+  passwordInput.value = "";
+  authMessage.textContent = "";
 });
-async function saveSession(focusTitle, minutes) {
-  if (!currentUser) {
-    alert("Please log in first.");
-    return;
-  }
 
-  const { error } = await supabaseClient.from("sessions").insert({
-    user_id: currentUser.id,
-    title: focusTitle,
-    minutes: minutes,
-    completed_at: new Date().toISOString()
-  });
-
-  if (error) {
-    alert(error.message);
-  } else {
-    loadSessions();
-  }
-}
-async function loadSessions() {
+/* SUPABASE DATA LOGIC */
+async function loadSessionsFromSupabase() {
   if (!currentUser) return;
 
   const { data, error } = await supabaseClient
     .from("sessions")
     .select("*")
     .eq("user_id", currentUser.id)
-    .order("completed_at", { ascending: false });
+    .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
+    console.error("Error loading sessions:", error);
     return;
   }
 
-  const list = document.getElementById("sessionsList");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  data.forEach(session => {
-    const item = document.createElement("div");
-    item.className = "session-item";
-    item.innerHTML = `
-      <strong>${session.title || "Focus Session"}</strong>
-      <span>${session.minutes} min</span>
-    `;
-
-    list.appendChild(item);
-  });
+  sessions = data || [];
+  renderCalendar();
+  renderSessions();
+  updateStats();
 }
 
-checkUser();
+async function saveSessionToSupabase(task, minutes, dateString, timeString) {
+  if (!currentUser) return;
 
+  const { error } = await supabaseClient.from("sessions").insert({
+    user_id: currentUser.id,
+    task: task,
+    minutes: minutes,
+    date_string: dateString,
+    time_string: timeString
+  });
+
+  if (error) {
+    console.error("Error saving session:", error);
+  } else {
+    loadSessionsFromSupabase();
+  }
+}
+
+document.getElementById("clearSessionsBtn").addEventListener("click", async () => {
+  if (!currentUser || !confirm("Are you sure you want to delete all your sessions?")) return;
+  
+  const { error } = await supabaseClient
+    .from('sessions')
+    .delete()
+    .eq('user_id', currentUser.id);
+    
+  if (error) {
+    console.error("Error clearing sessions:", error);
+  } else {
+    loadSessionsFromSupabase();
+  }
+});
+
+
+// DOM Elements - App
 const timerText = document.getElementById("timerText");
 const miniTimerText = document.getElementById("miniTimerText");
 const progress = document.querySelector(".progress");
@@ -131,21 +145,34 @@ const focusInput = document.getElementById("focusInput");
 const calendarGrid = document.getElementById("calendarGrid");
 const monthLabel = document.getElementById("monthLabel");
 const sessionList = document.getElementById("sessionList");
+const calendarSessionList = document.getElementById("calendarSessionList");
 
 const alarmSound = document.getElementById("alarmSound");
 
-/* TIMER */
+/* VIEW NAVIGATION */
+const navBtns = document.querySelectorAll(".nav-btn[data-view]");
+const mainViews = document.querySelectorAll(".main-view");
+
+navBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    navBtns.forEach(b => b.classList.remove("active"));
+    mainViews.forEach(v => v.classList.remove("active"));
+    
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.view).classList.add("active");
+  });
+});
+
+/* TIMER STATE */
 let totalSeconds = 1500;
 let remainingSeconds = totalSeconds;
 let running = false;
 let interval;
 
-/* CALENDAR */
+/* CALENDAR STATE */
 let today = new Date();
 let visibleMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 let selectedDate = new Date();
-
-let sessions = JSON.parse(localStorage.getItem("sessions")) || [];
 
 /* UTIL */
 function formatTime(s){
@@ -156,8 +183,9 @@ function formatTime(s){
 
 /* TIMER UI */
 function updateUI(){
-  timerText.textContent = formatTime(remainingSeconds);
-  miniTimerText.textContent = formatTime(remainingSeconds);
+  const formatted = formatTime(remainingSeconds);
+  timerText.textContent = formatted;
+  miniTimerText.textContent = formatted;
 
   const circumference = 659.73;
   const offset = circumference * (1 - remainingSeconds / totalSeconds);
@@ -165,7 +193,8 @@ function updateUI(){
   progress.style.strokeDashoffset = offset;
   miniProgress.style.strokeDashoffset = offset;
 
-  localStorage.setItem("focusTimerTime", formatTime(remainingSeconds));
+  // Broadcast the time to the miniplayer instead of using localStorage
+  timerChannel.postMessage({ time: formatted });
 }
 
 /* TIMER LOGIC */
@@ -198,39 +227,18 @@ function finish(playSound=false){
   let used = Math.round((totalSeconds - remainingSeconds)/60);
   let task = focusInput.value || "Session";
 
-function finish(playSound=false){
-  pause();
-
-  let used = Math.round((totalSeconds - remainingSeconds)/60);
-  let task = focusInput.value || "Session";
-
-  sessions.push({
-    task,
-    minutes: used,
-    date: selectedDate.toDateString(),
-    time: new Date().toLocaleTimeString()
-  });
-
-  localStorage.setItem("sessions", JSON.stringify(sessions));
-
-  // 🔥 This sends the completed session to Supabase
-  saveSession(task, used);
+  if (used > 0) {
+    const dateStr = selectedDate.toDateString();
+    const timeStr = new Date().toLocaleTimeString();
+    
+    // Save to Supabase (this will trigger a re-render automatically on success)
+    saveSessionToSupabase(task, used, dateStr, timeStr);
+  }
 
   if(playSound){
     alarmSound.play().catch(()=>{});
   }
 
-  renderSessions();
-  renderCalendar();
-  remainingSeconds = totalSeconds;
-  updateUI();
-}
-  if(playSound){
-    alarmSound.play().catch(()=>{});
-  }
-
-  renderSessions();
-  renderCalendar();
   remainingSeconds = totalSeconds;
   updateUI();
 }
@@ -251,6 +259,15 @@ minusBtn.onclick = ()=> setTime(Math.max(1,totalSeconds/60 - 5));
 
 setManualBtn.onclick = ()=> setTime(manualMinutes.value);
 
+/* BREAK BUTTONS */
+document.querySelectorAll(".break").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".break").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    setTime(parseInt(btn.dataset.minutes));
+  });
+});
+
 /* MINI BUTTONS */
 miniPlayBtn.onclick = startPauseBtn.onclick;
 miniFinishBtn.onclick = finishBtn.onclick;
@@ -260,9 +277,29 @@ miniStopAlarmBtn.onclick = stopAlarm;
 
 /* SET TIME */
 function setTime(min){
+  if (!min || isNaN(min)) return;
   totalSeconds = min * 60;
   remainingSeconds = totalSeconds;
   updateUI();
+}
+
+/* STATS */
+function updateStats() {
+  const totalSessionsEl = document.getElementById("totalSessions");
+  const totalMinutesEl = document.getElementById("totalMinutes");
+  const todayMinutesEl = document.getElementById("todayMinutes");
+
+  totalSessionsEl.textContent = sessions.length;
+  
+  const totalMin = sessions.reduce((acc, s) => acc + s.minutes, 0);
+  totalMinutesEl.textContent = totalMin;
+
+  const todayStr = new Date().toDateString();
+  const todayMin = sessions
+    .filter(s => s.date_string === todayStr)
+    .reduce((acc, s) => acc + s.minutes, 0);
+  
+  todayMinutesEl.textContent = todayMin;
 }
 
 /* CALENDAR */
@@ -297,7 +334,7 @@ function renderCalendar(){
       el.classList.add("selected");
     }
 
-    if(sessions.some(s=> new Date(s.date).toDateString()===dateObj.toDateString())){
+    if(sessions.some(s => s.date_string === dateObj.toDateString())){
       el.classList.add("has-session");
     }
 
@@ -324,39 +361,55 @@ document.getElementById("nextMonth").onclick = ()=>{
 /* SESSIONS */
 function renderSessions(){
   sessionList.innerHTML = "";
+  if (calendarSessionList) calendarSessionList.innerHTML = "";
 
-  let list = sessions.filter(s=> new Date(s.date).toDateString()===selectedDate.toDateString());
+  let list = sessions.filter(s => s.date_string === selectedDate.toDateString());
+
+  if (list.length === 0 && calendarSessionList) {
+    calendarSessionList.innerHTML = "<p>No sessions recorded for this day.</p>";
+  }
 
   list.forEach(s=>{
-    let el = document.createElement("div");
-    el.className="session-item";
-    el.innerHTML=`
+    let html = `
       <div class="dot"></div>
       <div>
         <strong>${s.task}</strong>
-        <small>${s.time}</small>
+        <small>${s.time_string}</small>
       </div>
       <div>${s.minutes} min</div>
     `;
+
+    // Sidebar list
+    let el = document.createElement("div");
+    el.className="session-item";
+    el.innerHTML = html;
     sessionList.appendChild(el);
+
+    // Calendar view list
+    if (calendarSessionList) {
+      let calEl = document.createElement("div");
+      calEl.className="session-item";
+      calEl.innerHTML = html;
+      calendarSessionList.appendChild(calEl);
+    }
   });
 }
 
-/* MINIPLAYER (SMALL CLOCK) */
+/* MINIPLAYER (SMALL CLOCK) - using BroadcastChannel instead of localStorage */
 pipBtn.onclick = ()=>{
   const mini = window.open("", "", "width=260,height=150");
 
   mini.document.write(`
     <body style="margin:0;background:#1e5edb;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;">
       <div style="width:220px;height:100px;background:#0a1422;border-radius:30px;display:flex;align-items:center;justify-content:center;color:#8eeaff;font-size:32px;">
-        <span id="t">25:00</span>
+        <span id="t">${formatTime(remainingSeconds)}</span>
       </div>
 
       <script>
-        setInterval(()=>{
-          document.getElementById("t").innerText =
-          localStorage.getItem("focusTimerTime");
-        },200);
+        const channel = new BroadcastChannel('timer_sync');
+        channel.onmessage = (event) => {
+          document.getElementById("t").innerText = event.data.time;
+        };
       <\/script>
     </body>
   `);
@@ -365,4 +418,3 @@ pipBtn.onclick = ()=>{
 /* INIT */
 updateUI();
 renderCalendar();
-renderSessions();
