@@ -8,9 +8,25 @@
 </head>
 
 <body>
-  <div class="app">
+  <div id="authContainer" class="auth-wrapper">
+    <div class="auth-card">
+      <h2>Welcome to Focus<span>Timer</span></h2>
+      <p>Please log in or sign up to save your sessions.</p>
+      
+      <div class="auth-inputs">
+        <input id="email" type="email" placeholder="Email Address" required>
+        <input id="password" type="password" placeholder="Password" required>
+      </div>
 
-    <!-- LEFT SIDEBAR -->
+      <div class="auth-buttons">
+        <button id="loginBtn" class="primary-btn">Log In</button>
+        <button id="signupBtn" class="secondary-btn">Sign Up</button>
+      </div>
+      <p id="authMessage" class="auth-message"></p>
+    </div>
+  </div>
+
+  <div id="appContainer" class="app" style="display: none;">
     <aside class="sidebar">
       <h1>Focus<span>Timer</span></h1>
 
@@ -33,6 +49,11 @@
         <button class="nav-btn" data-view="settingsView">
           <span class="nav-icon">⚙</span>
           <span>Settings</span>
+        </button>
+        
+        <button id="logoutBtn" class="nav-btn logout-btn">
+          <span class="nav-icon">⎋</span>
+          <span>Log Out</span>
         </button>
       </nav>
 
@@ -59,7 +80,6 @@
       <section class="sessions">
         <div class="section-title">
           <h3>Today's Sessions</h3>
-          <button id="addSessionBtn">+ Add</button>
         </div>
 
         <div id="sessionList"></div>
@@ -70,10 +90,8 @@
       </blockquote>
     </aside>
 
-    <!-- CENTER AREA -->
     <main class="main">
 
-      <!-- TIMER VIEW -->
       <section id="timerView" class="main-view active">
         <div class="timer-section">
 
@@ -138,14 +156,12 @@
         </div>
       </section>
 
-      <!-- CALENDAR VIEW -->
       <section id="calendarView" class="main-view panel-view">
         <h2>Calendar</h2>
         <p>Sessions saved for the selected day.</p>
         <div id="calendarSessionList" class="big-card"></div>
       </section>
 
-      <!-- STATS VIEW -->
       <section id="statsView" class="main-view panel-view">
         <h2>Stats</h2>
         <p>Your focus progress updates automatically.</p>
@@ -168,7 +184,6 @@
         </div>
       </section>
 
-      <!-- SETTINGS VIEW -->
       <section id="settingsView" class="main-view panel-view">
         <h2>Settings</h2>
         <p>Change your timer length manually or in 5-minute steps.</p>
@@ -189,7 +204,6 @@
 
     </main>
 
-    <!-- RIGHT PANEL -->
     <aside class="right-panel">
 
       <section class="music-card">
@@ -244,17 +258,8 @@
   <audio id="alarmSound" loop preload="auto">
     <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg" />
   </audio>
-  <div class="auth-box">
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
 
-  <button id="signupBtn">Sign Up</button>
-  <button id="loginBtn">Log In</button>
-  <button id="logoutBtn">Log Out</button>
-</div>
-  <div id="sessionsList"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
 </body>
 </html>
